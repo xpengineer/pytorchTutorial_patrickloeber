@@ -8,10 +8,18 @@ import torch
 
 # torch.empty(size): uninitiallized
 x = torch.empty(1) # scalar
+print(f"type(x): {type(x)}")
+print(f"x.dtype: {x.dtype}")
+print(f"x.size(): {x.size()}")
 print(x)
 x = torch.empty(3) # vector, 1D
+print(f"type(x): {type(x)}")
+print(f"x.size(): {x.size()}")
 print(x)
 x = torch.empty(2,3) # matrix, 2D
+print(f"type(x): {type(x)}")
+print(f"x.size(): {x.size()}")
+
 print(x)
 x = torch.empty(2,2,3) # tensor, 3 dimensions
 #x = torch.empty(2,2,2,3) # tensor, 4 dimensions
@@ -19,12 +27,13 @@ print(x)
 
 # torch.rand(size): random numbers [0, 1]
 x = torch.rand(5, 3)
-print(x)
+print(f"rand(5, 3): {x}")
 
 # torch.zeros(size), fill with 0
 # torch.ones(size), fill with 1
 x = torch.zeros(5, 3)
 print(x)
+print(f"rand(5, 3): {x}")
 
 # check size
 print(x.size())
@@ -41,13 +50,16 @@ print(x.dtype)
 
 # construct from data
 x = torch.tensor([5.5, 3])
-print(x.size())
+print(f"tensor([5.5, 3]: {x.size()}")
+print(x)
 
 # requires_grad argument
 # This will tell pytorch that it will need to calculate the gradients for this tensor
 # later in your optimization steps
 # i.e. this is a variable in your model that you want to optimize
 x = torch.tensor([5.5, 3], requires_grad=True)
+print(f"tensor([5.5, 3], requires_grad=True")
+print(x)
 
 # Operations
 y = torch.rand(2, 2)
@@ -75,13 +87,20 @@ z = torch.div(x,y)
 
 # Slicing
 x = torch.rand(5,3)
+print("Slicing")
 print(x)
-print(x[:, 0]) # all rows, column 0
-print(x[1, :]) # row 1, all columns
-print(x[1,1]) # element at 1, 1
+print(f"x[:, 0]: {x[:, 0]}")  # all rows, column 0
+print(f"x[1, :]: {x[1, :]}")  # row 1, all columns
+print(f"x[1,1]: {x[1,1]}")  # element at 1, 1
 
 # Get the actual value if only 1 element in your tensor
+print()
 print(x[1,1].item())
+print(f"x[1,1].item(): {x[1,1].item()}")
+print(f"x[1, :].tolist(): {x[1, :].tolist()}")
+print(f"type(x[1, :].tolist()): {type(x[1, :].tolist())}")
+print(f"type(x[1, :]): {type(x[1, :])}")
+print(f"x[1, :].size(): {x[1, :].size()}")
 
 # Reshape with torch.view()
 x = torch.randn(4, 4)
