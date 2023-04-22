@@ -22,7 +22,15 @@ def loss(y, y_pred):
 # J = MSE = 1/N * (w*x - y)**2
 # dJ/dw = 1/N * 2x(w*x - y)
 def gradient(x, y, y_pred):
-    return np.dot(2*x, y_pred - y).mean()
+    z2 = np.dot(2*x, y_pred - y) # XP: it is sum. a single number.
+    print(f'z2: {z2}')
+    print(f'z2.mean(): {z2.mean()}')  # no effect
+    print(f'z2/4: {z2/4}')  # correct
+
+    z = 2*x * (y_pred - y)
+    print(f'z: {z}')
+    print(f'z.mean(): {z.mean()}')
+    return z.mean()
 
 print(f'Prediction before training: f(5) = {forward(5):.3f}')
 
