@@ -101,10 +101,15 @@ for epoch in range(num_epochs):
         # input_layer: 3 input channels, 6 output channels, 5 kernel size
         images = images.to(device)
         labels = labels.to(device)
+        # print(f'images.shape: {images.shape}')  # images.shape: torch.Size([4, 3, 32, 32])
+        # print(f'labels.shape: {labels.shape}')  # labels.shape: torch.Size([4])
 
         # Forward pass
         outputs = model(images)
         loss = criterion(outputs, labels)
+        # print(f'outputs.shape: {outputs.shape}')  # outputs.shape: torch.Size([4, 10])
+        # print(f'loss.shape: {loss.shape}')  # loss.shape: torch.Size([])
+        # print(loss)  # tensor(2.3500, grad_fn=<NllLossBackward0>)
 
         # Backward and optimize
         optimizer.zero_grad()
@@ -132,7 +137,8 @@ with torch.no_grad():
         n_samples += labels.size(0)
         n_correct += (predicted == labels).sum().item()
         
-        for i in range(batch_size):
+        # for i in range(batch_size):  # IndexError if batch_size is 7
+        for i in range(labels.size(0)):  # or labels.shape[0]
             label = labels[i]
             pred = predicted[i]
             if (label == pred):
