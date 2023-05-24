@@ -16,6 +16,8 @@ import torch.nn as nn
 # 0) Training samples, watch the shape!
 X = torch.tensor([[1], [2], [3], [4]], dtype=torch.float32)
 Y = torch.tensor([[2], [4], [6], [8]], dtype=torch.float32)
+print(X.shape)  # torch.Size([4, 1])
+print(Y.shape)  # torch.Size([4, 1])
 
 n_samples, n_features = X.shape
 print(f'#samples: {n_samples}, #features: {n_features}')
@@ -56,6 +58,8 @@ optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 for epoch in range(n_iters):
     # predict = forward pass with our model
     y_predicted = model(X)
+    print("y_predicted: ", y_predicted.shape)  # torch.Size([4, 1])
+    print("type y_predicted: ", type(y_predicted))  # <class 'torch.Tensor'>
 
     # loss
     l = loss(Y, y_predicted)

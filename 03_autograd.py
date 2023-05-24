@@ -41,6 +41,7 @@ x = torch.randn(3, requires_grad=True)
 y = x * 2
 for _ in range(10):
     y = y * 2
+    print(y)
 
 print(y)
 print(y.shape)
@@ -84,10 +85,12 @@ with torch.no_grad():
 # !!! We need to be careful during optimization !!!
 # Use .zero_() to empty the gradients before a new optimization step!
 weights = torch.ones(4, requires_grad=True)
+print(weights)
 
 for epoch in range(3):
     # just a dummy example
     model_output = (weights*3).sum()
+    print(model_output)
     model_output.backward()
     
     print(weights.grad)

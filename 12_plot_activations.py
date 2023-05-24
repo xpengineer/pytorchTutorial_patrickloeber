@@ -11,6 +11,8 @@ y=np.linspace(-10,10,100)
 fig = plt.figure()
 plt.plot(y,sigmoid(y),'b', label='linspace(-10,10,100)')
 
+plt.legend(loc='best')
+
 plt.grid(linestyle='--')
 
 plt.xlabel('X Axis')

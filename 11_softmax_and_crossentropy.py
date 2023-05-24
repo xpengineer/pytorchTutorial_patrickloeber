@@ -16,8 +16,10 @@ import numpy as np
 # -> squashes the output to be between 0 and 1 = probability
 # sum of all probabilities is 1
 def softmax(x):
-    return np.exp(x) / np.sum(np.exp(x), axis=0)
+    # return np.exp(x) / np.sum(np.exp(x), axis=0)
+    return np.exp(x) / np.sum(np.exp(x), axis=-1)
 
+# pred_good
 x = np.array([2.0, 1.0, 0.1])
 outputs = softmax(x)
 print('softmax numpy:', outputs)
@@ -26,6 +28,16 @@ x = torch.tensor([2.0, 1.0, 0.1])
 outputs = torch.softmax(x, dim=0) # along values along first axis
 print('softmax torch:', outputs)
 
+# pred_bad
+x = np.array([0.5, 2.0, 0.3])
+outputs = softmax(x)
+print('softmax numpy:', outputs)
+
+x = torch.tensor([0.5, 2.0, 0.3])
+outputs = torch.softmax(x, dim=0) # along values along first axis
+print('softmax torch:', outputs)
+
+
 # Cross entropy
 # Cross-entropy loss, or log loss, measures the performance of a classification model 
 # whose output is a probability value between 0 and 1. 
@@ -33,21 +45,36 @@ print('softmax torch:', outputs)
 def cross_entropy(actual, predicted):
     EPS = 1e-15
     predicted = np.clip(predicted, EPS, 1 - EPS)
-    loss = -np.sum(actual * np.log(predicted))
-    return loss # / float(predicted.shape[0])
+    los = -np.sum(actual * np.log(predicted))
+    return los # / float(predicted.shape[0])
+
+def cross_entropy_xp(actual, predicted):
+    EPS = 1e-15
+    predicted = np.clip(predicted, EPS, 1 - EPS)
+    los = -np.dot(actual, np.log(predicted))
+    return los # / float(predicted.shape[0])
 
 # y must be one hot encoded
 # if class 0: [1 0 0]
 # if class 1: [0 1 0]
 # if class 2: [0 0 1]
 Y = np.array([1, 0, 0])
-Y_pred_good = np.array([0.7, 0.2, 0.1])
-Y_pred_bad = np.array([0.1, 0.3, 0.6])
+Y_pred_good = np.array([0.6590, 0.2424, 0.0986])
+Y_pred_bad = np.array([0.1587, 0.7113, 0.1299])
+
 l1 = cross_entropy(Y, Y_pred_good)
 l2 = cross_entropy(Y, Y_pred_bad)
 print(f'Loss1 numpy: {l1:.4f}')
 print(f'Loss2 numpy: {l2:.4f}')
 
+# XP
+l1 = cross_entropy_xp(Y, Y_pred_good)
+l2 = cross_entropy_xp(Y, Y_pred_bad)
+print(f'XP Loss1 numpy: {l1:.4f}')
+print(f'XP Loss2 numpy: {l2:.4f}')
+
+
+# PyTorch
 # CrossEntropyLoss in PyTorch (applies Softmax)
 # nn.LogSoftmax + nn.NLLLoss
 # NLLLoss = negative log likelihood loss
@@ -69,16 +96,24 @@ l2 = loss(Y_pred_bad, Y)
 print(f'PyTorch Loss1: {l1.item():.4f}')
 print(f'PyTorch Loss2: {l2.item():.4f}')
 
+
 # get predictions
 _, predictions1 = torch.max(Y_pred_good, 1)
 _, predictions2 = torch.max(Y_pred_bad, 1)
 print(f'Actual class: {Y.item()}, Y_pred1: {predictions1.item()}, Y_pred2: {predictions2.item()}')
+
+# XP
+predictions1 = torch.argmax(Y_pred_good, 1)
+predictions2 = torch.argmax(Y_pred_bad, 1)
+print(f'XP Actual class: {Y.item()}, Y_pred1: {predictions1.item()}, Y_pred2: {predictions2.item()}')
+
 
 # allows batch loss for multiple samples
 
 # target is of size nBatch = 3
 # each element has class label: 0, 1, or 2
 Y = torch.tensor([2, 0, 1])
+# XP: not working: Y = torch.tensor([[2, 0, 1]])
 
 # input is of size nBatch x nClasses = 3 x 3
 # Y_pred are logits (not softmax)
@@ -102,6 +137,13 @@ _, predictions1 = torch.max(Y_pred_good, 1)
 _, predictions2 = torch.max(Y_pred_bad, 1)
 print(f'Actual class: {Y}, Y_pred1: {predictions1}, Y_pred2: {predictions2}')
 
+# XP
+predictions1 = torch.argmax(Y_pred_good, 1)
+predictions2 = torch.argmax(Y_pred_bad, 1)
+print(f'XP Actual class: {Y}, Y_pred1: {predictions1}, Y_pred2: {predictions2}')
+print(f'XP tolist Actual class: {Y.tolist()}, Y_pred1: {predictions1.tolist()}, Y_pred2: {predictions2.tolist()}')
+
+
 # Binary classification
 class NeuralNet1(nn.Module):
     def __init__(self, input_size, hidden_size):
@@ -110,8 +152,8 @@ class NeuralNet1(nn.Module):
         self.relu = nn.ReLU()
         self.linear2 = nn.Linear(hidden_size, 1)  
     
-    def forward(self, x):
-        out = self.linear1(x)
+    def forward(self, xx):
+        out = self.linear1(xx)
         out = self.relu(out)
         out = self.linear2(out)
         # sigmoid at the end
@@ -136,7 +178,5 @@ class NeuralNet2(nn.Module):
         # no softmax at the end
         return out
 
-model = NeuralNet2(input_size=28*28, hidden_size=5, num_classes=3)
-criterion = nn.CrossEntropyLoss()  # (applies Softmax)
-
-
+model2 = NeuralNet2(input_size=28*28, hidden_size=5, num_classes=3)
+criterion2 = nn.CrossEntropyLoss()  # (applies Softmax)

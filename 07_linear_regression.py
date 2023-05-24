@@ -10,7 +10,10 @@ X_numpy, y_numpy = datasets.make_regression(n_samples=100, n_features=1, noise=2
 # cast to float Tensor
 X = torch.from_numpy(X_numpy.astype(np.float32))
 y = torch.from_numpy(y_numpy.astype(np.float32))
-y = y.view(y.shape[0], 1)
+print(y.shape)
+# y = y.view(y.shape[0], 1)
+y = y.view(-1, 1)
+print(y.shape)
 
 n_samples, n_features = X.shape
 
@@ -45,7 +48,18 @@ for epoch in range(num_epochs):
 
 # Plot
 predicted = model(X).detach().numpy()
+print('predicted', predicted[:5, :])
+print('y_numpy', y_numpy[:5])
+
+print('predicted', predicted.shape)
+print('X_numpy', X_numpy.shape)
+print('y_numpy', y_numpy.shape)
+
+# X_numpy.shape[0] is 100
+# X_numpy = X_numpy.reshape(-1)  # (100,)
+X_numpy = X_numpy.reshape(X_numpy.shape[0])  # (100,)
+print('X_numpy reshape', X_numpy.shape)
 
 plt.plot(X_numpy, y_numpy, 'ro')
 plt.plot(X_numpy, predicted, 'b')
-plt.show()
+# plt.show()

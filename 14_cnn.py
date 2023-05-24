@@ -21,6 +21,9 @@ transform = transforms.Compose(
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 # CIFAR10: 60000 32x32 color images in 10 classes, with 6000 images per class
+# XP: "The next 3072 bytes are the values of the pixels of the image"
+# XP: each pixel is 1 byte?
+# http://yann.lecun.com/exdb/mnist/
 train_dataset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                         download=True, transform=transform)
 
@@ -40,12 +43,12 @@ def imshow(img):
     img = img / 2 + 0.5  # unnormalize
     npimg = img.numpy()
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
-    plt.show()
+    # plt.show()
 
 
 # get some random training images
 dataiter = iter(train_loader)
-images, labels = dataiter.next()
+images, labels = next(dataiter)
 
 # show images
 imshow(torchvision.utils.make_grid(images))
@@ -62,7 +65,22 @@ class ConvNet(nn.Module):
 
     def forward(self, x):
         # -> n, 3, 32, 32
-        x = self.pool(F.relu(self.conv1(x)))  # -> n, 6, 14, 14
+        # XP:
+        # where n is # of samples or batch size
+        # w is current size: 32
+        # s is the stride
+        # f is the size of filter
+        # let y*y be the size of resulting feature map
+        # the last row is y-1, which corresponds to the row (y-1)*s in the input 32*32
+        # Thus, (y-1)*s + f <= w
+        # y = (w-f)/s + 1
+
+        # x = self.pool(F.relu(self.conv1(x)))  # -> n, 6, 14, 14
+        x = self.conv1(x)  # -> n, 6, 28, 28
+        x = F.relu(x)  # -> n, 6, 28, 28
+        x = self.pool(x)  # -> n, 6, 14, 14
+
+        # x = F.relu(self.conv2(x))  # -> n, 16, 10, 10
         x = self.pool(F.relu(self.conv2(x)))  # -> n, 16, 5, 5
         x = x.view(-1, 16 * 5 * 5)            # -> n, 400
         x = F.relu(self.fc1(x))               # -> n, 120

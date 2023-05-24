@@ -17,7 +17,7 @@ for epoch in range(num_epochs):
 
 # epoch = one forward and backward pass of ALL training samples
 # batch_size = number of training samples used in one forward/backward pass
-# number of iterations = number of passes, each pass (forward+backward) using [batch_size] number of sampes
+# number of iterations = number of passes, each pass (forward+backward) using [batch_size] number of samples
 # e.g : 100 samples, batch_size=20 -> 100/20=5 iterations for 1 epoch
 
 # --> DataLoader can do the batch computation for us
@@ -37,6 +37,7 @@ class WineDataset(Dataset):
         # here the first column is the class label, the rest are the features
         self.x_data = torch.from_numpy(xy[:, 1:]) # size [n_samples, n_features]
         self.y_data = torch.from_numpy(xy[:, [0]]) # size [n_samples, 1]
+        # xy[:, [0]] is same as xy[:, :1]
 
     # support indexing such that dataset[i] can be used to get i-th sample
     def __getitem__(self, index):
@@ -62,11 +63,13 @@ print(features, labels)
 train_loader = DataLoader(dataset=dataset,
                           batch_size=4,
                           shuffle=True,
-                          num_workers=2)
+                          num_workers=0)
+                          # num_workers=2)
 
 # convert to an iterator and look at one random sample
 dataiter = iter(train_loader)
-data = dataiter.next()
+# data = dataiter.next()
+data = next(dataiter)
 features, labels = data
 print(features, labels)
 
@@ -97,6 +100,7 @@ train_loader = DataLoader(dataset=train_dataset,
 
 # look at one random sample
 dataiter = iter(train_loader)
-data = dataiter.next()
+data = next(dataiter)
 inputs, targets = data
-print(inputs.shape, targets.shape)
+print(inputs.shape)
+print(targets.shape)

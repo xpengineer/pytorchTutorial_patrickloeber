@@ -39,7 +39,9 @@ for epoch in range(n_iters):
     #w.data = w.data - learning_rate * w.grad
     with torch.no_grad():
         w -= learning_rate * w.grad
-    
+    # print(learning_rate * w.grad)
+    # print(f'w*Y: {w*Y}')
+
     # zero the gradients after updating
     w.grad.zero_()
 
