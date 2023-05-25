@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.utils.data
 import torch.optim as optim
 from torch.optim import lr_scheduler
 import numpy as np
@@ -49,16 +50,21 @@ def imshow(inp, title):
     inp = np.clip(inp, 0, 1)
     plt.imshow(inp)
     plt.title(title)
-    plt.show()
+    # plt.show()
 
 
 # Get a batch of training data
 inputs, classes = next(iter(dataloaders['train']))
 
 # Make a grid from batch
-out = torchvision.utils.make_grid(inputs)
+out = torchvision.utils.make_grid(inputs, nrow=2)  # default nrow: 8 images per row
+print(out.shape)
+# if batch_size=4 & nrow=2, torch.Size([3, 454, 454])
+# if batch_size=4 & nrow=8, torch.Size([3, 228, 906])
+# if batch_size=16 & nrow=8, torch.Size([3, 454, 1810])
 
 imshow(out, title=[class_names[x] for x in classes])
+
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     since = time.time()
@@ -67,7 +73,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     best_acc = 0.0
 
     for epoch in range(num_epochs):
-        print('Epoch {}/{}'.format(epoch, num_epochs - 1))
+        print('Epoch {}/{}'.format(epoch, num_epochs - 1))  # Epoch 0/24
         print('-' * 10)
 
         # Each epoch has a training and validation phase
@@ -131,6 +137,10 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 #### Finetuning the convnet ####
 # Load a pretrained model and reset final fully connected layer.
 
+# why is "self.fc" the last layer?
+# A: search for "self.fc" in
+#   https://pytorch.org/vision/main/_modules/torchvision/models/resnet.html#resnet18
+#
 model = models.resnet18(pretrained=True)
 num_ftrs = model.fc.in_features
 # Here the size of each output sample is set to 2.
