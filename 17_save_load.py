@@ -34,6 +34,7 @@ class Model(nn.Module):
         y_pred = torch.sigmoid(self.linear(x))
         return y_pred
 
+
 model = Model(n_input_features=6)
 # train your model...
 
@@ -43,7 +44,7 @@ for param in model.parameters():
 
 # save and load entire model
 
-FILE = "model.pth"
+FILE = "./tmp/model.pth"
 torch.save(model, FILE)
 
 loaded_model = torch.load(FILE)
@@ -56,7 +57,7 @@ for param in loaded_model.parameters():
 ############save only state dict #########################
 
 # save only state dict
-FILE = "model.pth"
+FILE = "./tmp/model.pth"
 torch.save(model.state_dict(), FILE)
 
 print(model.state_dict())

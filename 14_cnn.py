@@ -120,7 +120,7 @@ for epoch in range(num_epochs):
             print (f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{n_total_steps}], Loss: {loss.item():.4f}')
 
 print('Finished Training')
-PATH = './cnn.pth'
+PATH = './tmp/cnn.pth'
 torch.save(model.state_dict(), PATH)
 
 with torch.no_grad():
